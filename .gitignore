@@ -1,0 +1,5 @@
+target/
+.env
+src/main/resources/application.properties
+*.log
+.DS_Store

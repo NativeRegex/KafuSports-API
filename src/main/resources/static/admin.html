@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | KAFU Sports</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #0A0E14;
+            color: #F9FAFB;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 1200px; margin: 0 auto; }
+        h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 32px;
+            color: #C9A227;
+            margin-bottom: 24px;
+        }
+        h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: #C9A227;
+            margin-bottom: 16px;
+        }
+        .card {
+            background: rgba(10, 20, 15, 0.92);
+            border: 1px solid rgba(77, 208, 134, 0.35);
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+        input, select {
+            width: 100%;
+            padding: 12px 14px;
+            margin-bottom: 12px;
+            background: #FFFFFF;
+            color: #0A0E14;
+            border: 2px solid #C9A227;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: 'Inter', sans-serif;
+            box-sizing: border-box;
+        }
+        input:focus, select:focus { outline: none; border-color: #1A5C38; }
+        button {
+            width: 100%;
+            padding: 12px 20px;
+            background: #C9A227;
+            color: #0A0E14;
+            border: none;
+            border-radius: 8px;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        button:hover { background: #4DD086; }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .msg-success {
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(77,208,134,0.2);
+            border: 1px solid rgba(77,208,134,0.5);
+            border-radius: 6px;
+            color: #4DD086;
+            font-size: 13px;
+        }
+        .msg-error {
+            margin-top: 12px;
+            padding: 10px;
+            background: rgba(220,53,69,0.2);
+            border: 1px solid rgba(220,53,69,0.5);
+            border-radius: 6px;
+            color: #ff7b72;
+            font-size: 13px;
+        }
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .logout-btn {
+            width: auto;
+            padding: 10px 20px;
+            background: transparent;
+            color: #C9A227;
+            border: 2px solid #C9A227;
+            font-size: 12px;
+        }
+        .logout-btn:hover { background: #C9A227; color: #0A0E14; }
+        #loginView { max-width: 440px; margin: 80px auto; }
+        #loginView h1 { text-align: center; margin-bottom: 24px; }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <!-- LOGIN VIEW -->
+    <div id="loginView" class="card">
+        <h1>KAFU Admin Login</h1>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required autocomplete="username">
+            <input type="password" id="password" placeholder="Password" required autocomplete="current-password">
+            <button type="submit">Login</button>
+        </form>
+        <div id="loginMsg"></div>
+    </div>
+
+    <!-- ADMIN VIEW (hidden by default) -->
+    <div id="adminView" style="display: none;">
+        <div class="topbar">
+            <h1 style="margin: 0;">Admin Dashboard</h1>
+            <button id="logoutBtn" class="logout-btn">Logout</button>
+        </div>
+
+        <div class="grid">
+
+            <!-- Add Team -->
+            <div class="card">
+                <h2>Add Team</h2>
+                <form id="teamForm">
+                    <input type="text" id="teamName" placeholder="Team Name" required>
+                    <input type="text" id="teamSport" placeholder="Sport" value="Men's Football" required>
+                    <button type="submit">Add Team</button>
+                </form>
+                <div id="teamMsg"></div>
+            </div>
+
+            <!-- Add Fixture -->
+            <div class="card">
+                <h2>Schedule Fixture</h2>
+                <form id="fixtureForm">
+                    <select id="fixtureHome" required></select>
+                    <select id="fixtureAway" required></select>
+                    <input type="datetime-local" id="fixtureDate" required>
+                    <input type="text" id="fixtureVenue" placeholder="Venue" required>
+                    <button type="submit">Schedule</button>
+                </form>
+                <div id="fixtureMsg"></div>
+            </div>
+
+            <!-- Record Result -->
+            <div class="card">
+                <h2>Record Result</h2>
+                <form id="resultForm">
+                    <select id="resultFixture" required></select>
+                    <input type="number" id="resultHome" placeholder="Home Score" min="0" required>
+                    <input type="number" id="resultAway" placeholder="Away Score" min="0" required>
+                    <button type="submit">Save Result</button>
+                </form>
+                <div id="resultMsg"></div>
+            </div>
+
+            <!-- Add Player -->
+            <div class="card">
+                <h2>Add Player</h2>
+                <form id="playerForm">
+                    <input type="text" id="playerName" placeholder="Player Name" required>
+                    <select id="playerTeam" required></select>
+                    <select id="playerPosition" required>
+                        <option value="GK">GK</option>
+                        <option value="DEF">DEF</option>
+                        <option value="MID">MID</option>
+                        <option value="FWD">FWD</option>
+                    </select>
+                    <input type="number" id="playerNumber" placeholder="Jersey #" min="1" max="99" required>
+                    <button type="submit">Add Player</button>
+                </form>
+                <div id="playerMsg"></div>
+            </div>
+
+        </div>
+    </div>
+
+</div>
+
+<script>
+// ============== API HELPER ==============
+const API_BASE = window.location.origin;  // Same origin as Spring Boot
+
+async function apiFetch(path, opts = {}) {
+    const token = localStorage.getItem('kafu_admin_token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['Authorization'] = 'Bearer ' + token;
+
+    const res = await fetch(API_BASE + path, { ...opts, headers });
+    if (res.status === 401) {
+        // Token expired — force re-login
+        localStorage.removeItem('kafu_admin_token');
+        showLogin();
+        throw new Error('Session expired — please log in again');
+    }
+    if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `Request failed: ${res.status}`);
+    }
+    return res.json();
+}
+
+// ============== VIEW SWITCHING ==============
+const loginView = document.getElementById('loginView');
+const adminView = document.getElementById('adminView');
+
+function showLogin() {
+    loginView.style.display = 'block';
+    adminView.style.display = 'none';
+}
+
+function showAdmin() {
+    loginView.style.display = 'none';
+    adminView.style.display = 'block';
+    loadAll();
+}
+
+// ============== LOGIN ==============
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const msg = document.getElementById('loginMsg');
+
+    try {
+        const res = await fetch(API_BASE + '/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+        });
+        if (!res.ok) throw new Error('Invalid credentials');
+        const data = await res.json();
+        localStorage.setItem('kafu_admin_token', data.token);
+        msg.innerHTML = '';
+        showAdmin();
+    } catch (err) {
+        msg.innerHTML = `<div class="msg-error">${err.message}</div>`;
+    }
+});
+
+// ============== LOGOUT ==============
+document.getElementById('logoutBtn').addEventListener('click', () => {
+    localStorage.removeItem('kafu_admin_token');
+    showLogin();
+});
+
+// ============== LOAD DATA ==============
+async function loadAll() {
+    try {
+        const [teams, fixtures] = await Promise.all([
+            apiFetch('/api/teams'),
+            apiFetch('/api/fixtures')
+        ]);
+
+        // Team dropdowns
+        const teamOpts = teams.map(t => `<option value="${t.id}">${t.name}</option>`).join('');
+        document.getElementById('fixtureHome').innerHTML = '<option value="">Home Team</option>' + teamOpts;
+        document.getElementById('fixtureAway').innerHTML = '<option value="">Away Team</option>' + teamOpts;
+        document.getElementById('playerTeam').innerHTML  = '<option value="">Select Team</option>' + teamOpts;
+
+        // Fixture dropdown
+        const fixturesOpts = fixtures
+            .filter(f => f.status === 'SCHEDULED')
+            .map(f => `<option value="${f.id}">${f.homeTeam.name} vs ${f.awayTeam.name}</option>`).join('');
+        document.getElementById('resultFixture').innerHTML = '<option value="">Select Fixture</option>' + fixturesOpts;
+    } catch (err) {
+        console.error('Load failed:', err);
+    }
+}
+
+// ============== ADD TEAM ==============
+document.getElementById('teamForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('teamMsg');
+    try {
+        await apiFetch('/api/admin/teams', {
+            method: 'POST',
+            body: JSON.stringify({
+                name: document.getElementById('teamName').value,
+                sport: document.getElementById('teamSport').value
+            })
+        });
+        msg.innerHTML = '<div class="msg-success">✅ Team added!</div>';
+        document.getElementById('teamName').value = '';
+        loadAll();
+    } catch (err) {
+        msg.innerHTML = `<div class="msg-error">${err.message}</div>`;
+    }
+});
+
+// ============== ADD FIXTURE ==============
+document.getElementById('fixtureForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('fixtureMsg');
+    try {
+        await apiFetch('/api/admin/fixtures', {
+            method: 'POST',
+            body: JSON.stringify({
+                homeTeamId: document.getElementById('fixtureHome').value,
+                awayTeamId: document.getElementById('fixtureAway').value,
+                matchDate:  document.getElementById('fixtureDate').value + ':00',
+                venue:      document.getElementById('fixtureVenue').value
+            })
+        });
+        msg.innerHTML = '<div class="msg-success">✅ Fixture scheduled!</div>';
+        document.getElementById('fixtureVenue').value = '';
+        loadAll();
+    } catch (err) {
+        msg.innerHTML = `<div class="msg-error">${err.message}</div>`;
+    }
+});
+
+// ============== RECORD RESULT ==============
+document.getElementById('resultForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('resultMsg');
+    try {
+        await apiFetch('/api/admin/results', {
+            method: 'POST',
+            body: JSON.stringify({
+                fixtureId:  document.getElementById('resultFixture').value,
+                homeScore:  document.getElementById('resultHome').value,
+                awayScore:  document.getElementById('resultAway').value
+            })
+        });
+        msg.innerHTML = '<div class="msg-success">✅ Result recorded!</div>';
+        loadAll();
+    } catch (err) {
+        msg.innerHTML = `<div class="msg-error">${err.message}</div>`;
+    }
+});
+
+// ============== ADD PLAYER ==============
+document.getElementById('playerForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const msg = document.getElementById('playerMsg');
+    try {
+        await apiFetch('/api/admin/players', {
+            method: 'POST',
+            body: JSON.stringify({
+                name:         document.getElementById('playerName').value,
+                teamId:       document.getElementById('playerTeam').value,
+                position:     document.getElementById('playerPosition').value,
+                jerseyNumber: document.getElementById('playerNumber').value
+            })
+        });
+        msg.innerHTML = '<div class="msg-success">✅ Player added!</div>';
+        document.getElementById('playerName').value = '';
+        loadAll();
+    } catch (err) {
+        msg.innerHTML = `<div class="msg-error">${err.message}</div>`;
+    }
+});
+
+// ============== INIT ==============
+if (localStorage.getItem('kafu_admin_token')) {
+    showAdmin();
+} else {
+    showLogin();
+}
+</script>
+</body>
+</html>
