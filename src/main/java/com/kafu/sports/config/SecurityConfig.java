@@ -35,7 +35,7 @@ public class SecurityConfig {
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                 // Google verification file and static admin page — public
-                .requestMatchers("/google*.html", "/admin.html", "/admin", "/", "/error", "/favicon.ico").permitAll()
+                .requestMatchers("/google*.html", "/sitemap.xml", "/robots.txt", "/admin.html", "/admin", "/", "/error", "/favicon.ico").permitAll()
 
                 // Public API reads
                 .requestMatchers(HttpMethod.GET,
