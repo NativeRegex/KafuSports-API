@@ -34,19 +34,27 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public reads
+                // Google verification file and static admin page — public
+                .requestMatchers("/google*.html", "/admin.html", "/admin", "/", "/error", "/favicon.ico").permitAll()
+
+                // Public API reads
                 .requestMatchers(HttpMethod.GET,
-                    "/api/league", "/api/teams", "/api/teams/**",
-                    "/api/fixtures", "/api/results",
-                    "/api/players", "/api/stats",
-                    "/api/health"
+                    "/api/health",
+                    "/api/league",
+                    "/api/teams",
+                    "/api/teams/**",
+                    "/api/fixtures",
+                    "/api/results",
+                    "/api/players",
+                    "/api/stats"
                 ).permitAll()
-                // Login endpoint
+
+                // Login
                 .requestMatchers(HttpMethod.POST, "/api/auth/login").permitAll()
-                // Static admin HTML file (page itself is public; its API calls need JWT)
-                .requestMatchers("/admin.html", "/admin", "/").permitAll()
-                // Admin writes
+
+                // Admin writes — JWT required
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
+
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
@@ -57,7 +65,12 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration cfg = new CorsConfiguration();
-        cfg.setAllowedOriginPatterns(List.of("*"));
+        cfg.setAllowedOriginPatterns(List.of(
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "https://kafusports.netlify.app",
+            "*"
+        ));
         cfg.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         cfg.setAllowedHeaders(List.of("*"));
         cfg.setAllowCredentials(true);
